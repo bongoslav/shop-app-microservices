@@ -32,6 +32,14 @@ module.exports = {
             type: DataTypes.STRING,
             allowNull: false,
           },
+          createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
         },
         { transaction }
       );
@@ -62,6 +70,14 @@ module.exports = {
             type: DataTypes.STRING,
             allowNull: false,
           },
+          createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
         },
         { transaction }
       );
@@ -81,6 +97,14 @@ module.exports = {
             references: { model: "Addresses", key: "id" },
             onDelete: "CASCADE",
             type: DataTypes.UUID,
+          },
+          createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
           },
         },
         { transaction }
@@ -106,6 +130,14 @@ module.exports = {
           },
           price: {
             type: DataTypes.FLOAT,
+            allowNull: false,
+          },
+          createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: Sequelize.DATE,
             allowNull: false,
           },
         },
@@ -137,6 +169,14 @@ module.exports = {
             allowNull: false,
             references: { model: "Products", key: "id" },
             onDelete: "CASCADE",
+          },
+          createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
           },
         },
         { transaction }
@@ -180,6 +220,25 @@ module.exports = {
             references: { model: "Customers", key: "id" },
             onDelete: "CASCADE",
           },
+          createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+        },
+        { transaction }
+      );
+
+      await queryInterface.addColumn(
+        "Customers",
+        "cartId",
+        {
+          type: DataTypes.UUID,
+          allowNull: false,
+          references: { model: "Carts", key: "id" },
         },
         { transaction }
       );
