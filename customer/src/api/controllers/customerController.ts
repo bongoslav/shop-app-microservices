@@ -7,9 +7,9 @@ export class CustomerController {
 		
     try {
       const customers = await CustomerService.getAllCustomers();
-      res.json(customers);
+      return res.json(customers);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 
@@ -19,9 +19,9 @@ export class CustomerController {
         parseInt(req.params.id)
       );
       if (customer) {
-        res.json(customer);
+        return res.json(customer);
       } else {
-        res.status(404).json({ error: "Customer not found" });
+        return res.status(404).json({ error: "Customer not found" });
       }
     } catch (error) {
       res.status(500).json({ error: error.message });
@@ -31,9 +31,9 @@ export class CustomerController {
   static async createCustomer(req: Request, res: Response) {
     try {
       const newCustomer = await CustomerService.createCustomer(req.body);
-      res.status(201).json(newCustomer);
+      return res.status(201).json(newCustomer);
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 
@@ -42,12 +42,12 @@ export class CustomerController {
       const [affectedRows, updatedCustomers] =
         await CustomerService.updateCustomer(parseInt(req.params.id), req.body);
       if (affectedRows > 0) {
-        res.json(updatedCustomers[0]);
+        return res.json(updatedCustomers[0]);
       } else {
-        res.status(404).json({ error: "Customer not found" });
+        return res.status(404).json({ error: "Customer not found" });
       }
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 
@@ -57,12 +57,12 @@ export class CustomerController {
         parseInt(req.params.id)
       );
       if (deletedRows > 0) {
-        res.status(204).send();
+        return res.status(204).send();
       } else {
-        res.status(404).json({ error: "Customer not found" });
+        return res.status(404).json({ error: "Customer not found" });
       }
     } catch (error) {
-      res.status(500).json({ error: error.message });
+      return res.status(500).json({ error: error.message });
     }
   }
 }
