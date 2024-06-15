@@ -1,10 +1,10 @@
 import { Sequelize } from "sequelize-typescript";
 import Address from "./models/Address";
-import Customers_Addresses from "./models/CustomersAddresses";
 import Customer from "./models/Customer";
 import Order from "./models/Order";
 import Product from "./models/Product";
 import Cart from "./models/Cart";
+import Wishlist from "./models/Wishlist";
 
 export const db = new Sequelize({
   database: process.env.POSTGRES_DATABASE,
@@ -16,6 +16,13 @@ export const db = new Sequelize({
   logging: false,
 });
 
-db.addModels([Address, Customer, Customers_Addresses, Order, Product, Cart]);
+db.addModels([
+  Address,
+  Customer,
+  Order,
+  Product,
+  Cart,
+  Wishlist,
+]);
 
 export default db;
