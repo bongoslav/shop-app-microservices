@@ -4,10 +4,10 @@ import {
   Model,
   DataType,
   ForeignKey,
-  BelongsTo,
   PrimaryKey,
   Default,
   AllowNull,
+  BelongsToMany,
 } from "sequelize-typescript";
 import Customer from "./Customer";
 import Product from "./Product";
@@ -28,13 +28,6 @@ export default class Cart extends Model {
   @Column(DataType.UUID)
   declare customerId: string;
 
-  @ForeignKey(() => Product)
-  @Column(DataType.UUID)
-  declare productId: string;
-
-  @BelongsTo(() => Customer, "customerId")
-  declare customer: Customer;
-
-  @BelongsTo(() => Product, "productId")
-  declare product: Product;
+  @BelongsToMany(() => Product, "Cart_Products", "cartId", "productId")
+  declare products: Product[];
 }

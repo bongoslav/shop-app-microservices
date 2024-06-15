@@ -4,13 +4,14 @@ import {
   Model,
   DataType,
   ForeignKey,
-  BelongsTo,
   PrimaryKey,
   Default,
   AllowNull,
+  BelongsToMany,
 } from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
 import Customer from "./Customer";
+import Product from "./Product";
 
 @Table
 export default class Order extends Model {
@@ -32,6 +33,6 @@ export default class Order extends Model {
   @Column(DataType.UUID)
   declare customerId: string;
 
-  @BelongsTo(() => Customer, "customerId")
-  declare customer: Customer;
+  @BelongsToMany(() => Product, "Order_Products", "orderId", "productId")
+  declare products: Product[];
 }

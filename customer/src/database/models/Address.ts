@@ -1,5 +1,6 @@
 import {
   AllowNull,
+  BelongsToMany,
   Column,
   DataType,
   Default,
@@ -8,7 +9,7 @@ import {
   Table,
 } from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
-import Customers_Addresses from "./CustomersAddresses";
+import Customer from "./Customer";
 
 export interface AddressData {
   id: string;
@@ -41,5 +42,11 @@ export default class Address extends Model {
   @Column(DataType.STRING)
   declare country: String;
 
-  declare Customers_Addresses: Customers_Addresses;
+  @BelongsToMany(
+    () => Customer,
+    "Customers_Addresses",
+    "addressId",
+    "customerId"
+  )
+  declare customers: Customer[];
 }

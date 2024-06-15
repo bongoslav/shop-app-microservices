@@ -1,11 +1,12 @@
 import {
   AllowNull,
-  BelongsTo,
   BelongsToMany,
   Column,
   DataType,
   Default,
   ForeignKey,
+  HasMany,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
@@ -13,6 +14,8 @@ import {
 import { v4 as uuidv4 } from "uuid";
 import Cart from "./Cart";
 import Address from "./Address";
+import Wishlist from "./Wishlist";
+import Order from "./Order";
 
 export interface CustomerData {
   id: string;
@@ -20,6 +23,8 @@ export interface CustomerData {
   hashedPassword: string;
   salt: string;
   phone: string;
+  cartId: string;
+  wishlistId: string;
 }
 
 @Table
@@ -46,9 +51,9 @@ export default class Customer extends Model {
   declare phone: String;
 
   @AllowNull(false)
-  @ForeignKey(() => Cart)
+  @ForeignKey(() => Wishlist)
   @Column(DataType.UUID)
-  declare cartId: string;
+  declare wishlistId: string;
 
   @BelongsToMany(
     () => Address,
@@ -58,6 +63,12 @@ export default class Customer extends Model {
   )
   declare addresses: Address[];
 
-  @BelongsTo(() => Cart, "cartId")
-  declare cart: Cart[];
+  @HasOne(() => Cart, "cartId")
+  declare cart: Cart;
+
+  @HasOne(() => Wishlist, "wishlistId")
+  declare wishlist: Wishlist;
+
+  @HasMany(() => Order, "customerId")
+  declare orders: Order[];
 }

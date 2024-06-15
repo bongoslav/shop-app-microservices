@@ -82,35 +82,7 @@ module.exports = {
         { transaction }
       );
 
-      // Create the join table
-      await queryInterface.createTable(
-        "Customers_Addresses",
-        {
-          customerId: {
-            allowNull: false,
-            references: { model: "Customers", key: "id" },
-            onDelete: "CASCADE",
-            type: DataTypes.UUID,
-          },
-          addressId: {
-            allowNull: false,
-            references: { model: "Addresses", key: "id" },
-            onDelete: "CASCADE",
-            type: DataTypes.UUID,
-          },
-          createdAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-          updatedAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-        },
-        { transaction }
-      );
-
-      // Create the products table
+      // products
       await queryInterface.createTable(
         "Products",
         {
@@ -144,7 +116,7 @@ module.exports = {
         { transaction }
       );
 
-      // Create the Cart table
+      // Carts
       await queryInterface.createTable(
         "Carts",
         {
@@ -164,12 +136,6 @@ module.exports = {
             references: { model: "Customers", key: "id" },
             onDelete: "CASCADE",
           },
-          productId: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: { model: "Products", key: "id" },
-            onDelete: "CASCADE",
-          },
           createdAt: {
             type: Sequelize.DATE,
             allowNull: false,
@@ -182,20 +148,7 @@ module.exports = {
         { transaction }
       );
 
-      // add the relationship between carts and products
-      await queryInterface.addColumn(
-        "Products",
-        "cartId",
-        {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: { model: "Carts", key: "id" },
-          onDelete: "CASCADE",
-        },
-        { transaction }
-      );
-
-      // create Orders table
+      // Orders
       await queryInterface.createTable(
         "Orders",
         {
@@ -232,6 +185,65 @@ module.exports = {
         { transaction }
       );
 
+      // wishlists
+      await queryInterface.createTable(
+        "Wishlists",
+        {
+          id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUID,
+            allowNull: false,
+            primaryKey: true,
+          },
+          name: {
+            type: DataTypes.STRING,
+            allowNull: true,
+          },
+          description: {
+            type: DataTypes.STRING,
+            allowNull: true,
+          },
+          banner: {
+            type: DataTypes.STRING,
+            allowNull: true,
+          },
+          available: {
+            type: DataTypes.BOOLEAN,
+            allowNull: true,
+          },
+          price: {
+            type: DataTypes.FLOAT,
+            allowNull: false,
+          },
+          customerId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: { model: "Customers", key: "id" },
+            onDelete: "CASCADE",
+          },
+          createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+        },
+        { transaction }
+      );
+
+      await queryInterface.addColumn(
+        "Customers",
+        "wishlistId",
+        {
+          type: DataTypes.UUID,
+          allowNull: false,
+          references: { model: "Wishlists", key: "id" },
+        },
+        { transaction }
+      );
+
       await queryInterface.addColumn(
         "Customers",
         "cartId",
@@ -247,11 +259,6 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.dropTable(
-        "Customers_Addresses",
-        { cascade: true },
-        { transaction }
-      );
       await queryInterface.dropTable(
         "Addresses",
         { cascade: true },
@@ -274,6 +281,11 @@ module.exports = {
       );
       await queryInterface.dropTable(
         "Orders",
+        { cascade: true },
+        { transaction }
+      );
+      await queryInterface.dropTable(
+        "Wishlists",
         { cascade: true },
         { transaction }
       );

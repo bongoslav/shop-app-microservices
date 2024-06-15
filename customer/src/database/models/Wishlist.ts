@@ -4,12 +4,14 @@ import {
   Model,
   DataType,
   ForeignKey,
-  BelongsTo,
   PrimaryKey,
   Default,
+  AllowNull,
+  BelongsToMany,
 } from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
 import Customer from "./Customer";
+import Product from "./Product";
 
 @Table
 export default class Wishlist extends Model {
@@ -18,18 +20,23 @@ export default class Wishlist extends Model {
   @Column(DataType.UUID)
   declare id: string;
 
+  @AllowNull
   @Column(DataType.STRING)
   declare name: string;
 
+  @AllowNull
   @Column(DataType.STRING)
   declare description: string;
 
+  @AllowNull
   @Column(DataType.STRING)
   declare banner: string;
 
+  @AllowNull
   @Column(DataType.BOOLEAN)
   declare available: boolean;
 
+  @AllowNull(false)
   @Column(DataType.NUMBER)
   declare price: number;
 
@@ -37,6 +44,6 @@ export default class Wishlist extends Model {
   @Column(DataType.UUID)
   declare customerId: string;
 
-  @BelongsTo(() => Customer, "customerId")
-  declare customer: Customer;
+  @BelongsToMany(() => Product, "Wishlist_Products", "wishlistId", "productId")
+  declare products: Product[];
 }

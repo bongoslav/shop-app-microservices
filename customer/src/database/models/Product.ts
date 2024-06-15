@@ -3,15 +3,15 @@ import {
   Column,
   Model,
   DataType,
-  ForeignKey,
-  BelongsTo,
   PrimaryKey,
   Default,
   AllowNull,
+  BelongsToMany,
 } from "sequelize-typescript";
-import Customer from "./Customer";
 import { v4 as uuidv4 } from "uuid";
 import Cart from "./Cart";
+import Wishlist from "./Wishlist";
+import Order from "./Order";
 
 @Table
 export default class Product extends Model {
@@ -32,10 +32,12 @@ export default class Product extends Model {
   @Column(DataType.NUMBER)
   declare price: number;
 
-  @ForeignKey(() => Cart)
-  @Column(DataType.UUID)
-  declare cartId: string;
+  @BelongsToMany(() => Cart, "Cart_Products", "productId", "cartId")
+  declare carts: Cart[];
 
-  @BelongsTo(() => Cart, "cartId")
-  declare cart: Cart;
+  @BelongsToMany(() => Wishlist, "Wishlist_Products", "productId", "wishlistId")
+  declare wishlists: Wishlist[];
+
+  @BelongsToMany(() => Order, "Order_Products", "productId", "orderId")
+  declare orders: Order[];
 }
