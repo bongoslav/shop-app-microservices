@@ -37,6 +37,7 @@ export default class Wishlist extends Model {
   declare available: boolean;
 
   @AllowNull(false)
+  @Default(0)
   @Column(DataType.NUMBER)
   declare price: number;
 

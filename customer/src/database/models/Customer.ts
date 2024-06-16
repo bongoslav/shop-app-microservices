@@ -4,7 +4,6 @@ import {
   Column,
   DataType,
   Default,
-  ForeignKey,
   HasMany,
   HasOne,
   Model,
@@ -21,10 +20,7 @@ export interface CustomerData {
   id: string;
   email: string;
   hashedPassword: string;
-  salt: string;
   phone: string;
-  cartId: string;
-  wishlistId: string;
 }
 
 @Table
@@ -36,24 +32,15 @@ export default class Customer extends Model {
 
   @AllowNull(false)
   @Column(DataType.STRING)
-  declare email: String;
+  declare email: string;
 
   @AllowNull(false)
   @Column(DataType.STRING)
-  declare hashedPassword: String;
+  declare hashedPassword: string;
 
   @AllowNull(false)
   @Column(DataType.STRING)
-  declare salt: String;
-
-  @AllowNull(false)
-  @Column(DataType.STRING)
-  declare phone: String;
-
-  @AllowNull(false)
-  @ForeignKey(() => Wishlist)
-  @Column(DataType.UUID)
-  declare wishlistId: string;
+  declare phone: string;
 
   @BelongsToMany(
     () => Address,
@@ -62,12 +49,6 @@ export default class Customer extends Model {
     "addressId"
   )
   declare addresses: Address[];
-
-  @HasOne(() => Cart, "cartId")
-  declare cart: Cart;
-
-  @HasOne(() => Wishlist, "wishlistId")
-  declare wishlist: Wishlist;
 
   @HasMany(() => Order, "customerId")
   declare orders: Order[];
