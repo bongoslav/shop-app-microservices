@@ -1,12 +1,19 @@
 import { Router } from "express";
-import { CustomerController } from "../controllers/customerController";
+import {
+  createCustomer,
+  deleteCustomer,
+  getAllCustomers,
+  getCustomerById,
+  updateCustomer,
+} from "../controllers/customerController";
 
 const router = Router();
 
-router.get("/", CustomerController.getAllCustomers);
-router.get("/:id", CustomerController.getCustomerById);
-router.post("/", CustomerController.createCustomer);
-router.put("/:id", CustomerController.updateCustomer);
-router.delete("/:id", CustomerController.deleteCustomer);
+// todo: add signup, login, add address, get profile, whoami
+router.get("/", getAllCustomers);
+router.get("/:id", getCustomerById);
+router.post("/", createCustomer);
+router.put("/:id", updateCustomer);
+router.delete("/:id", deleteCustomer);
 
 export default router;
