@@ -4,7 +4,13 @@ import db from "./database/db";
 
 let server: http.Server;
 
-const startServer = (port: number): Promise<{ server: http.Server }> => {
+const startServer = async (port: number): Promise<{ server: http.Server }> => {
+  await db.authenticate();
+  console.log("Database connection has been established successfully.");
+
+  await db.sync(); 
+  console.log("Database synchronized.");
+
   return new Promise((resolve, reject) => {
     server = app.listen(port, () => {
       console.log(`Server is running on port ${port}`);

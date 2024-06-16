@@ -35,88 +35,100 @@ module.exports = {
       );
 
       // order -> products
-      await queryInterface.createTable("Order_Products", {
-        orderId: {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: {
-            model: "Orders",
-            key: "id",
+      await queryInterface.createTable(
+        "Order_Products",
+        {
+          orderId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+              model: "Orders",
+              key: "id",
+            },
+            onDelete: "CASCADE",
           },
-          onDelete: "CASCADE",
-        },
-        productId: {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: {
-            model: "Products",
-            key: "id",
+          productId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+              model: "Products",
+              key: "id",
+            },
+            onDelete: "CASCADE",
           },
-          onDelete: "CASCADE",
+          createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+          },
         },
-        createdAt: {
-          type: DataTypes.DATE,
-          allowNull: false,
-        },
-        updatedAt: {
-          type: DataTypes.DATE,
-          allowNull: false,
-        },
-      });
+        { transaction }
+      );
 
       // customers -> addresses
-      await queryInterface.createTable("Customers_Addresses", {
-        customerId: {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: {
-            model: "Customers",
-            key: "id",
+      await queryInterface.createTable(
+        "Customers_Addresses",
+        {
+          customerId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+              model: "Customers",
+              key: "id",
+            },
+            onDelete: "CASCADE",
           },
-          onDelete: "CASCADE",
-        },
-        addressId: {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: {
-            model: "Addresses",
-            key: "id",
+          addressId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+              model: "Addresses",
+              key: "id",
+            },
+            onDelete: "CASCADE",
           },
-          onDelete: "CASCADE",
+          createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+          },
         },
-        createdAt: {
-          type: DataTypes.DATE,
-          allowNull: false,
-        },
-        updatedAt: {
-          type: DataTypes.DATE,
-          allowNull: false,
-        },
-      });
+        { transaction }
+      );
 
       // carts -> products
-      await queryInterface.createTable("Cart_Products", {
-        cartId: {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: { model: "Carts", key: "id" },
-          onDelete: "CASCADE",
+      await queryInterface.createTable(
+        "Cart_Products",
+        {
+          cartId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: { model: "Carts", key: "id" },
+            onDelete: "CASCADE",
+          },
+          productId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: { model: "Products", key: "id" },
+            onDelete: "CASCADE",
+          },
+          createdAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: DataTypes.DATE,
+            allowNull: false,
+          },
         },
-        productId: {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: { model: "Products", key: "id" },
-          onDelete: "CASCADE",
-        },
-        createdAt: {
-          type: DataTypes.DATE,
-          allowNull: false,
-        },
-        updatedAt: {
-          type: DataTypes.DATE,
-          allowNull: false,
-        },
-      });
+        { transaction }
+      );
     });
   },
 

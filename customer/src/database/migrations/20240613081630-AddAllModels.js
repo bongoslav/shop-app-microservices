@@ -62,10 +62,6 @@ module.exports = {
             type: DataTypes.STRING,
             allowNull: false,
           },
-          salt: {
-            type: DataTypes.STRING,
-            allowNull: false,
-          },
           phone: {
             type: DataTypes.STRING,
             allowNull: false,
@@ -214,6 +210,7 @@ module.exports = {
           price: {
             type: DataTypes.FLOAT,
             allowNull: false,
+            defaultValue: 0,
           },
           customerId: {
             type: DataTypes.UUID,
@@ -229,28 +226,6 @@ module.exports = {
             type: Sequelize.DATE,
             allowNull: false,
           },
-        },
-        { transaction }
-      );
-
-      await queryInterface.addColumn(
-        "Customers",
-        "wishlistId",
-        {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: { model: "Wishlists", key: "id" },
-        },
-        { transaction }
-      );
-
-      await queryInterface.addColumn(
-        "Customers",
-        "cartId",
-        {
-          type: DataTypes.UUID,
-          allowNull: false,
-          references: { model: "Carts", key: "id" },
         },
         { transaction }
       );

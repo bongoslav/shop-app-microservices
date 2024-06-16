@@ -5,6 +5,8 @@ import Order from "./models/Order";
 import Product from "./models/Product";
 import Cart from "./models/Cart";
 import Wishlist from "./models/Wishlist";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export const db = new Sequelize({
   database: process.env.POSTGRES_DATABASE,
@@ -16,13 +18,6 @@ export const db = new Sequelize({
   logging: false,
 });
 
-db.addModels([
-  Address,
-  Customer,
-  Order,
-  Product,
-  Cart,
-  Wishlist,
-]);
+db.addModels([Address, Customer, Order, Product, Cart, Wishlist]);
 
 export default db;
