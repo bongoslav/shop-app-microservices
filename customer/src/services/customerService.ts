@@ -1,8 +1,6 @@
 export class CustomerService {
   async SubscribeEvents(payload) {
-    console.log("Triggering.... Customer Events");
-
-    payload = JSON.parse(payload);
+    console.log("Triggering Customer Events");
 
     const { event, data } = payload;
 
@@ -21,6 +19,9 @@ export class CustomerService {
         break;
       case "CREATE_ORDER":
         // this.ManageOrder(userId, order);
+        break;
+      case "TEST":
+        console.log("Working Subscriber");
         break;
       default:
         break;

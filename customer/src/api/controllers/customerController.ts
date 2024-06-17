@@ -30,6 +30,7 @@ export async function getCustomerById(req: Request, res: Response) {
   }
 }
 
+// TODO: validation
 export async function createCustomer(
   req: Request<{}, {}, CreateCustomerData>,
   res: Response

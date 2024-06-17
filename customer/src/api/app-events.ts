@@ -1,19 +1,19 @@
 import { Application, NextFunction, Request, Response } from "express";
 import { CustomerService } from "../services/customerService";
 
-export function appEvents(app: Application) {
+export async function appEventsHandler(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
   const service = new CustomerService();
-  app.use(
-    "/app-events",
-    async (req: Request, res: Response, next: NextFunction) => {
-      const { payload } = req.body;
+  try {
+    const { payload } = req.body;
 
-      //handle subscribe events
-      service.SubscribeEvents(payload);
+    await service.SubscribeEvents(payload);
 
-      console.log("============= Shopping ================");
-      console.log(payload);
-      res.json(payload);
-    }
-  );
+    res.json(payload);
+  } catch (e) {
+    next(e);
+  }
 }
