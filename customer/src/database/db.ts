@@ -8,7 +8,7 @@ import Wishlist from "./models/Wishlist";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-export const db = new Sequelize({
+const db = new Sequelize({
   database: process.env.POSTGRES_DATABASE,
   username: process.env.POSTGRES_USERNAME,
   password: process.env.POSTGRES_PASSWORD,
