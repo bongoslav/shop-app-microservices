@@ -45,7 +45,7 @@ const shutdown = async () => {
 
 startServer(Number(process.env.LISTEN_PORT) || 8001)
   .then(() => {
-    console.log("Server started successfully");
+    console.log("Customers server started successfully");
   })
   .catch((error) => {
     console.error("Failed to start server:", error);
