@@ -14,7 +14,7 @@ app.use(cors());
 // listen to events (Event driven architecture)
 app.post(`${BASE_PATH}/app-events`, appEventsHandler);
 
-app.use("/api/v1/customers", customerRoutes);
+app.use(BASE_PATH, customerRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   console.error(err.stack);
