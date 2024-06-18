@@ -11,6 +11,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.use((req: Request, res: Response, next: NextFunction) => {
+  console.log("CUSTOMERS: ", req.method, req.hostname, req.path);
+  next();
+});
+
 // listen to events (Event driven architecture)
 app.post(`${BASE_PATH}/app-events`, appEventsHandler);
 
