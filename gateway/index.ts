@@ -28,10 +28,10 @@ app.use(
 );
 
 app.use(
-  "/api/v1/products",
+  "/api/v1", // products
   proxy("http://localhost:8002", {
     proxyReqPathResolver: (req) => {
-      return `/api/v1/customers${req.url}`;
+      return `/api/v1/${req.url}`;
     },
     preserveHostHdr: true,
   })
