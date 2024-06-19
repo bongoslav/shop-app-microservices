@@ -16,6 +16,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   next();
 });
 
+// this is a vulnerability tho. will mitigate
 // listen to events (Event driven architecture)
 app.post(`${BASE_PATH}/app-events`, appEventsHandler);
 
