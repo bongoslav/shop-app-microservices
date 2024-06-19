@@ -21,7 +21,7 @@ app.use(
   "/api/v1/shopping",
   proxy("http://localhost:8003", {
     proxyReqPathResolver: (req) => {
-      return `/api/v1/customers${req.url}`;
+      return `/api/v1/shopping${req.url}`;
     },
     preserveHostHdr: true,
   })
