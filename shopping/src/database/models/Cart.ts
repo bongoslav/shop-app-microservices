@@ -22,6 +22,6 @@ export default class Cart extends Model {
   @Column(DataType.UUID)
   declare customerId: string;
 
-  @BelongsToMany(() => Product, "Carts_Products", "cartId", "productId")
+  @BelongsToMany(() => Product, "Cart_Products", "cartId", "productId")
   declare products: Product[];
 }

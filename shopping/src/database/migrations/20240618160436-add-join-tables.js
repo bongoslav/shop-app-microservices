@@ -7,7 +7,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.createTable(
-        "Carts_Products",
+        "Cart_Products",
         {
           cartId: {
             type: DataTypes.UUID,
@@ -81,7 +81,7 @@ module.exports = {
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.dropTable(
-        "Carts_Products",
+        "Cart_Products",
         { cascade: true },
         { transaction }
       );

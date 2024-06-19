@@ -3,17 +3,15 @@ import {
   Column,
   Model,
   DataType,
-  PrimaryKey,
   Default,
   AllowNull,
   ForeignKey,
 } from "sequelize-typescript";
-import { v4 as uuidv4 } from "uuid";
 import Cart from "./Cart";
 import Product from "./Product";
 
 @Table
-export default class Carts_Product extends Model {
+export default class Cart_Products extends Model {
   @ForeignKey(() => Cart)
   @Column(DataType.UUID)
   declare cartId: string;

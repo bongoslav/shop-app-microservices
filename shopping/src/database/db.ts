@@ -3,7 +3,8 @@ import Order from "./models/Order";
 import Product from "./models/Product";
 import Cart from "./models/Cart";
 import * as dotenv from "dotenv";
-import Carts_Product from "./models/Carts_Product";
+import Cart_Products from "./models/Cart_Products";
+import Orders_Products from "./models/Orders_Products";
 dotenv.config();
 
 const db = new Sequelize({
@@ -16,6 +17,6 @@ const db = new Sequelize({
   logging: false,
 });
 
-db.addModels([Cart, Product, Order, Carts_Product]);
+db.addModels([Cart, Product, Order, Cart_Products, Orders_Products]);
 
 export default db;

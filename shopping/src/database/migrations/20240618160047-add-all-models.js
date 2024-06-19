@@ -31,6 +31,10 @@ module.exports = {
             type: DataTypes.FLOAT,
             allowNull: false,
           },
+          type: {
+            type: DataTypes.STRING,
+            allowNull: false,
+          },
           unit: {
             type: DataTypes.INTEGER,
             allowNull: false,
