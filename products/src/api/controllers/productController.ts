@@ -1,7 +1,8 @@
 import { Request, Response } from "express";
 import Product from "../../database/models/Product";
 import { CreateProductData } from "../../utils/types";
-import { publishCustomerEvent, publishShoppingEvent } from "../../utils/events";
+import { publishMessage } from "../../utils/broker";
+import { CUSTOMER_SERVICE, SHOPPING_SERVICE } from "../../app";
 
 export async function getProducts(req: Request, res: Response) {
   try {
@@ -56,7 +57,7 @@ export async function addToWishlist(req: Request, res: Response) {
         event: "ADD_TO_WISHLIST",
         data: { userId: "TODO", product, quantity },
       };
-      await publishCustomerEvent({ payload });
+      await publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
       return res.status(200).json({ product: payload.data.product });
     } else {
       return res.status(400).json({ message: "Product not found" });
@@ -76,7 +77,7 @@ export async function removeFromWishlist(req: Request, res: Response) {
         event: "REMOVE_FROM_WISHLIST",
         data: { userId: "TODO", product },
       };
-      await publishCustomerEvent({ payload });
+      await publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
       return res.status(200).json({ product: payload.data.product });
     } else {
       return res.status(400).json({ message: "Product not found" });
@@ -96,10 +97,8 @@ export async function addToCart(req: Request, res: Response) {
         event: "ADD_TO_CART",
         data: { userId: "TODO", product, quantity },
       };
-
-      await publishCustomerEvent({ payload });
-      await publishShoppingEvent({ payload });
-
+      await publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
+      await publishMessage(SHOPPING_SERVICE, JSON.stringify(payload));
       return res
         .status(200)
         .json({ product: payload.data.product, unit: payload.data.quantity });
@@ -121,8 +120,8 @@ export async function removeFromCart(req: Request, res: Response) {
         event: "REMOVE_FROM_CART",
         data: { userId: "TODO", product },
       };
-      await publishCustomerEvent({ payload });
-      await publishShoppingEvent({ payload });
+      await publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
+      await publishMessage(SHOPPING_SERVICE, JSON.stringify(payload));
       return res.status(200).json({ product: payload.data.product });
     } else {
       return res.status(400).json({ message: "Product not found" });
