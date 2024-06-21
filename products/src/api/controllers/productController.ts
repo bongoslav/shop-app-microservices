@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import Product from "../../database/models/Product";
 import { CreateProductData } from "../../utils/types";
 import { publishMessage } from "../../utils/broker";
-import { CUSTOMER_SERVICE, SHOPPING_SERVICE } from "../../app";
 
 export async function getProducts(req: Request, res: Response) {
   try {
@@ -52,12 +51,18 @@ export async function addToWishlist(req: Request, res: Response) {
     // TODO userId after auth
     const quantity = req.body.quantity;
     const product = await Product.findByPk(req.body.productId);
+
     if (product) {
       const payload = {
         event: "ADD_TO_WISHLIST",
         data: { userId: "TODO", product, quantity },
       };
-      await publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
+
+      await publishMessage(
+        process.env.CUSTOMER_BINDING_KEY,
+        JSON.stringify(payload)
+      );
+
       return res.status(200).json({ product: payload.data.product });
     } else {
       return res.status(400).json({ message: "Product not found" });
@@ -77,7 +82,10 @@ export async function removeFromWishlist(req: Request, res: Response) {
         event: "REMOVE_FROM_WISHLIST",
         data: { userId: "TODO", product },
       };
-      await publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
+      await publishMessage(
+        process.env.CUSTOMER_BINDING_KEY,
+        JSON.stringify(payload)
+      );
       return res.status(200).json({ product: payload.data.product });
     } else {
       return res.status(400).json({ message: "Product not found" });
@@ -97,8 +105,14 @@ export async function addToCart(req: Request, res: Response) {
         event: "ADD_TO_CART",
         data: { userId: "TODO", product, quantity },
       };
-      await publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
-      await publishMessage(SHOPPING_SERVICE, JSON.stringify(payload));
+      await publishMessage(
+        process.env.CUSTOMER_BINDING_KEY,
+        JSON.stringify(payload)
+      );
+      await publishMessage(
+        process.env.SHOPPING_BINDING_KEY,
+        JSON.stringify(payload)
+      );
       return res
         .status(200)
         .json({ product: payload.data.product, unit: payload.data.quantity });
@@ -120,8 +134,14 @@ export async function removeFromCart(req: Request, res: Response) {
         event: "REMOVE_FROM_CART",
         data: { userId: "TODO", product },
       };
-      await publishMessage(CUSTOMER_SERVICE, JSON.stringify(payload));
-      await publishMessage(SHOPPING_SERVICE, JSON.stringify(payload));
+      await publishMessage(
+        process.env.CUSTOMER_BINDING_KEY,
+        JSON.stringify(payload)
+      );
+      await publishMessage(
+        process.env.SHOPPING_BINDING_KEY,
+        JSON.stringify(payload)
+      );
       return res.status(200).json({ product: payload.data.product });
     } else {
       return res.status(400).json({ message: "Product not found" });

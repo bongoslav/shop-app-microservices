@@ -1,6 +1,7 @@
 import http from "http";
 import app from "./app";
 import db from "./database/db";
+import { initializeRabbitMQ } from "./utils/broker";
 
 let server: http.Server;
 
@@ -8,8 +9,11 @@ const startServer = async (port: number): Promise<{ server: http.Server }> => {
   await db.authenticate();
   console.log("Database connection has been established successfully.");
 
-  await db.sync(); 
+  await db.sync();
   console.log("Database synchronized.");
+
+  await initializeRabbitMQ();
+  console.log("RabbitMQ initialized successfully.");
 
   return new Promise((resolve, reject) => {
     server = app.listen(port, () => {

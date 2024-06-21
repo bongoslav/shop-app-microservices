@@ -1,5 +1,6 @@
 import amqplib, { Channel, Connection } from "amqplib";
 import dotenv from "dotenv";
+import { SubscribeEvents } from "./subscribeEvents";
 dotenv.config();
 
 let connection: Connection;
@@ -39,7 +40,18 @@ export async function publishMessage(
   });
 }
 
-// products service don't need to subscribe to messages
+export async function subscribeMessage(queueName: string): Promise<void> {
+  if (!channel) {
+    throw new Error("Channel is not initialized");
+  }
+  channel.consume(queueName, (data) => {
+    if (data !== null) {
+      const message = JSON.parse(data.content.toString());
+      SubscribeEvents(message);
+      channel.ack(data);
+    }
+  });
+}
 
 export async function initializeRabbitMQ() {
   try {
@@ -50,6 +62,9 @@ export async function initializeRabbitMQ() {
     console.log(
       `Queue ${process.env.QUEUE_NAME} created and bound to ${process.env.BINDING_KEY}`
     );
+
+    await subscribeMessage(process.env.QUEUE_NAME);
+    console.log(`Subscribed to messages from queue ${process.env.QUEUE_NAME}`);
   } catch (err) {
     console.error("Failed to connect to RabbitMQ:", err);
   }

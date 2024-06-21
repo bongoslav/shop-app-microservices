@@ -2,7 +2,6 @@ import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import shoppingRoutes from "./api/routes/shoppingRoutes";
 import * as dotenv from "dotenv";
-import { appEventsHandler } from "./api/app-events";
 dotenv.config();
 
 const BASE_PATH = "/api/v1/shopping";
@@ -15,8 +14,6 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   console.log("SHOPPING: ", req.method, req.hostname, req.path);
   next();
 });
-
-app.post(`${BASE_PATH}/app-events`, appEventsHandler);
 
 app.use(BASE_PATH, shoppingRoutes);
 

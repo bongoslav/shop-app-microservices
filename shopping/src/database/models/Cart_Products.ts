@@ -6,6 +6,7 @@ import {
   Default,
   AllowNull,
   ForeignKey,
+  BelongsTo,
 } from "sequelize-typescript";
 import Cart from "./Cart";
 import Product from "./Product";
@@ -24,4 +25,10 @@ export default class Cart_Products extends Model {
   @AllowNull(false)
   @Column(DataType.INTEGER)
   declare quantity: number;
+
+  @BelongsTo(() => Cart)
+  declare cart: Cart;
+
+  @BelongsTo(() => Product)
+  declare product: Product;
 }

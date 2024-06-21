@@ -3,6 +3,7 @@ import Order from "../../database/models/Order";
 import Cart from "../../database/models/Cart";
 import Cart_Products from "../../database/models/Cart_Products";
 import Product from "../../database/models/Product";
+import { publishMessage } from "../../utils/broker";
 
 export async function getAllOrders(req: Request, res: Response) {
   try {
@@ -23,7 +24,10 @@ export async function createOrder(req: Request, res: Response) {
     // get user id from auth middleware - req.userId
     const customerId = "5c090437-5f28-4615-9a6c-fcc76dceb2c2";
 
-    const cart = await Cart.findOne({ where: { customerId } });
+    const cart = await Cart.findOne({
+      where: { customerId },
+      include: [Product],
+    });
     if (!cart) {
       throw new Error("Cart not found");
     }
@@ -50,6 +54,15 @@ export async function createOrder(req: Request, res: Response) {
 
     // clear the user's cart
     await Cart_Products.destroy({ where: { cartId: cart.id } });
+
+    const payload = {
+      event: "CREATE_ORDER",
+      data: { userId: "TODO", order },
+    };
+    await publishMessage(
+      process.env.CUSTOMER_BINDING_KEY,
+      JSON.stringify(payload)
+    );
 
     return res.status(201).json(order);
   } catch (error) {
@@ -91,6 +104,7 @@ export async function addToCart(req: Request, res: Response) {
         cartId: cart.id,
         productId,
       },
+      include: [Product],
     });
 
     if (cartProduct) {
@@ -104,6 +118,15 @@ export async function addToCart(req: Request, res: Response) {
         quantity,
       });
     }
+
+    const payload = {
+      event: "ADD_TO_CART",
+      data: { userId: customerId, product: cartProduct.product },
+    };
+    await publishMessage(
+      process.env.CUSTOMER_BINDING_KEY,
+      JSON.stringify(payload)
+    );
 
     return res.status(200).json(cartProduct);
   } catch (error) {
