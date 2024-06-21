@@ -45,11 +45,6 @@ export async function initializeRabbitMQ() {
   try {
     await createChannel();
     console.log("RabbitMQ connected and channel created");
-
-    await createQueue(process.env.QUEUE_NAME, process.env.BINDING_KEY);
-    console.log(
-      `Queue ${process.env.QUEUE_NAME} created and bound to ${process.env.BINDING_KEY}`
-    );
   } catch (err) {
     console.error("Failed to connect to RabbitMQ:", err);
   }
