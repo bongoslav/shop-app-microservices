@@ -1,0 +1,114 @@
+version: "3"
+services:
+  products-sql-db:
+    image: postgres:alpine
+    container_name: products-postgres
+    environment:
+      POSTGRES_DB: PRODUCT_MS_DB
+      POSTGRES_USER: bongoslav
+      POSTGRES_PASSWORD: some-password
+    ports:
+      - "5432:5432"
+    volumes:
+      - products_pgdata:/var/lib/postgresql/data
+
+  shopping-sql-db:
+    image: postgres:alpine
+    container_name: shopping-postgres
+    environment:
+      POSTGRES_DB: SHOPPING_MS_DB
+      POSTGRES_USER: bongoslav
+      POSTGRES_PASSWORD: some-password
+    ports:
+      - "5433:5432"
+    volumes:
+      - shopping_pgdata:/var/lib/postgresql/data
+
+  customer-sql-db:
+    image: postgres:alpine
+    container_name: customer-postgres
+    environment:
+      POSTGRES_DB: CUSTOMER_MS_DB
+      POSTGRES_USER: bongoslav
+      POSTGRES_PASSWORD: some-password
+    ports:
+      - "5434:5432"
+    volumes:
+      - customer_pgdata:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+
+  products:
+    build:
+      dockerfile: Dockerfile
+      context: ./products
+    container_name: products
+    ports:
+      - "8002:8002"
+    restart: always
+    depends_on:
+      - "products-sql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app
+      - /app/products/node_modules
+    env_file: "./products/.env"
+    environment:
+      PRODUCTS_POSTGRES_HOST: products-sql-db
+
+  shopping:
+    build:
+      dockerfile: Dockerfile
+      context: ./shopping
+    container_name: shopping
+    ports:
+      - "8003:8003"
+    restart: always
+    depends_on:
+      - "shopping-sql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app
+      - /app/shopping/node_modules
+    env_file: "./shopping/.env"
+    environment:
+      SHOPPING_POSTGRES_HOST: shopping-sql-db
+
+  customer:
+    build:
+      dockerfile: Dockerfile
+      context: ./customer
+    container_name: customer
+    ports:
+      - "8001:8001"
+    restart: always
+    depends_on:
+      - "customer-sql-db"
+      - "rabbitmq"
+    volumes:
+      - .:/app/
+      - /app/customer/node_modules
+    env_file: "./customer/.env"
+    environment:
+      CUSTOMER_POSTGRES_HOST: customer-sql-db
+
+  nginx-proxy:
+    build:
+      dockerfile: Dockerfile
+      context: ./proxy
+    depends_on:
+      - products
+      - shopping
+      - customer
+    ports:
+      - "80:80"
+
+# persist data after container is restarted or recreated
+volumes:
+  products_pgdata:
+  shopping_pgdata:
+  customer_pgdata:
