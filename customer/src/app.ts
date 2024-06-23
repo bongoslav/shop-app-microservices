@@ -4,7 +4,7 @@ import customerRoutes from "./api/routes/customerRoutes";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const BASE_PATH = "/api/v1/customers";
+const BASE_PATH = "/api/v1/customer";
 
 const app = express();
 app.use(express.json());
