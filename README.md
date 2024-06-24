@@ -1,7 +1,7 @@
 This is a Shop microservice app currently being developed to learn and practise **RabbitMQ** and microservices as a whole.  
-I am using **Node.js**, **Typescript**, **Express**, **SQL** & **Sequelize** for the development.  
-Also, I plan to use **Docker**, **RPC** and **CI/CD**.  
-I will include all the required **authentication** & **validation** later as they are not the main goal of this application.
+I am using **Node.js**, **Typescript**, **Express**, **SQL** & **Sequelize** for the development. I use migrations for the DBs as well.  
+Also, I have **Dockerised** the app and implemented **NGINX** for reverse proxy.  
+Some TODOs: **authentication** (OAuth) & **validation**;Redis Caching; CI/CD; Rate Limiting; Load balancing; Security; Swagger; Grafana for logging and monitoring; Performance testing; Documentation
 
 ## Current RabbitMQ setup
 
