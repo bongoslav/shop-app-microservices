@@ -30,13 +30,20 @@ export async function createQueue(
 export async function publishMessage(
   bindingKey: string,
   message: string
-): Promise<void> {
+): Promise<boolean> {
   if (!channel) {
     throw new Error("Channel is not initialized");
   }
-  channel.publish(process.env.EXCHANGE_NAME, bindingKey, Buffer.from(message), {
-    persistent: true,
-  });
+  // TODO: handle if error comes from the other ms
+  const result = channel.publish(
+    process.env.EXCHANGE_NAME,
+    bindingKey,
+    Buffer.from(message),
+    {
+      persistent: true,
+    }
+  );
+  return result;
 }
 
 // products service don't need to subscribe to messages

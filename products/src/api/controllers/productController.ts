@@ -158,22 +158,38 @@ export async function getProductsByCategory(req: Request, res: Response) {
 
 export async function addToWishlist(req: Request, res: Response) {
   try {
-    // TODO userId after auth
     const quantity = req.body.quantity;
     const product = await Product.findByPk(req.body.productId);
+
+    if (quantity > product.stock) {
+      return res.status(400).json({ message: "Insufficient stock of product" });
+    }
 
     if (product) {
       const payload = {
         event: "ADD_TO_WISHLIST",
-        data: { userId: "TODO", product, quantity },
+        data: {
+          userId: "1b9353b0-51ad-45e4-bc5d-cfea3d407ef4", // TODO: change after auth update
+          product,
+          quantity,
+        },
       };
 
-      await publishMessage(
+      // TODO: handle if unsuccessful response
+      const isPublished = await publishMessage(
         process.env.CUSTOMER_BINDING_KEY,
         JSON.stringify(payload)
       );
 
-      return res.status(200).json({ product: payload.data.product });
+      if (!isPublished) {
+        return res
+          .status(500)
+          .json({ message: "Error adding product to wishlist" });
+      }
+
+      return res
+        .status(200)
+        .json({ message: "Product added to user's wishlist successfully" });
     } else {
       return res.status(400).json({ message: "Product not found" });
     }
