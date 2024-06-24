@@ -1,6 +1,7 @@
 import { Sequelize } from "sequelize-typescript";
-import * as dotenv from "dotenv";
 import Product from "./models/Product";
+import Category from "./models/Category";
+import * as dotenv from "dotenv";
 dotenv.config();
 
 const db = new Sequelize({
@@ -13,6 +14,6 @@ const db = new Sequelize({
   logging: false,
 });
 
-db.addModels([Product]);
+db.addModels([Product, Category]);
 
 export default db;
