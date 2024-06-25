@@ -52,4 +52,10 @@ export default class Customer extends Model {
 
   @HasMany(() => Order, "customerId")
   declare orders: Order[];
+
+  @HasOne(() => Wishlist)
+  declare wishlistId: string;
+
+  @HasOne(() => Cart)
+  declare cartId: string;
 }

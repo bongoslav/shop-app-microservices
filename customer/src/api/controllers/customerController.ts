@@ -5,6 +5,7 @@ import { CreateCustomerData } from "../../utils/types";
 import Cart from "../../database/models/Cart";
 import Wishlist from "../../database/models/Wishlist";
 import db from "../../database/db";
+import Product from "../../database/models/Product";
 
 const updatableFields = ["email", "password", "phone"];
 
@@ -19,7 +20,12 @@ export async function getAllCustomers(req: Request, res: Response) {
 
 export async function getCustomerById(req: Request, res: Response) {
   try {
-    const customer = await Customer.findByPk(req.params.id);
+    const customer = await Customer.findByPk(req.params.id, {
+      include: [
+        { model: Wishlist, include: [Product] },
+        { model: Cart, include: [Product] },
+      ],
+    });
     if (customer) {
       return res.json(customer).status(200);
     } else {
