@@ -10,17 +10,22 @@ module.exports = {
       await queryInterface.createTable(
         "Wishlist_Products",
         {
-          wishlistsId: {
+          wishlistId: {
             allowNull: false,
             references: { model: "Wishlists", key: "id" },
             onDelete: "CASCADE",
             type: DataTypes.UUID,
           },
-          productsId: {
+          productId: {
             allowNull: false,
             references: { model: "Products", key: "id" },
             onDelete: "CASCADE",
             type: DataTypes.UUID,
+          },
+          quantity: {
+            allowNull: true,
+            defaultValue: 1,
+            type: DataTypes.INTEGER,
           },
           createdAt: {
             type: Sequelize.DATE,
@@ -117,6 +122,11 @@ module.exports = {
             allowNull: false,
             references: { model: "Products", key: "id" },
             onDelete: "CASCADE",
+          },
+          quantity: {
+            allowNull: true,
+            defaultValue: 1,
+            type: DataTypes.INTEGER,
           },
           createdAt: {
             type: DataTypes.DATE,

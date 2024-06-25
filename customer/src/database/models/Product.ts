@@ -25,10 +25,6 @@ export default class Product extends Model {
   declare name: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  declare banner: string;
-
-  @AllowNull(false)
   @Column(DataType.NUMBER)
   declare price: number;
 

@@ -20,10 +20,6 @@ export default class Cart extends Model {
   @Column(DataType.UUID)
   declare id: string;
 
-  @AllowNull(false)
-  @Column(DataType.INTEGER)
-  declare unit: number;
-
   @ForeignKey(() => Customer)
   @Column(DataType.UUID)
   declare customerId: string;
