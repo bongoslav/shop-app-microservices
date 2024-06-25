@@ -34,7 +34,6 @@ export async function publishMessage(
   if (!channel) {
     throw new Error("Channel is not initialized");
   }
-  // TODO: handle if error comes from the other ms
   const result = channel.publish(
     process.env.EXCHANGE_NAME,
     bindingKey,

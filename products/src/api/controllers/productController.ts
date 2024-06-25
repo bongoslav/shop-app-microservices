@@ -169,23 +169,17 @@ export async function addToWishlist(req: Request, res: Response) {
       const payload = {
         event: "ADD_TO_WISHLIST",
         data: {
-          userId: "1b9353b0-51ad-45e4-bc5d-cfea3d407ef4", // TODO: change after auth update
+          userId: "6f0a6422-1059-4dc4-b56c-eec59a52c189", // TODO: change after auth update
           product,
           quantity,
         },
       };
 
-      // TODO: handle if unsuccessful response
-      const isPublished = await publishMessage(
+      // what if unsuccessful response
+      await publishMessage(
         process.env.CUSTOMER_BINDING_KEY,
         JSON.stringify(payload)
       );
-
-      if (!isPublished) {
-        return res
-          .status(500)
-          .json({ message: "Error adding product to wishlist" });
-      }
 
       return res
         .status(200)
@@ -200,13 +194,13 @@ export async function addToWishlist(req: Request, res: Response) {
 
 export async function removeFromWishlist(req: Request, res: Response) {
   try {
-    // TODO userId after auth
     const productId = req.params.id;
     const product = await Product.findByPk(productId);
+
     if (product) {
       const payload = {
         event: "REMOVE_FROM_WISHLIST",
-        data: { userId: "TODO", product },
+        data: { userId: "6f0a6422-1059-4dc4-b56c-eec59a52c189", product },
       };
       await publishMessage(
         process.env.CUSTOMER_BINDING_KEY,
@@ -226,19 +220,26 @@ export async function addToCart(req: Request, res: Response) {
     // TODO userId after auth
     const quantity = req.body.quantity;
     const product = await Product.findByPk(req.body.productId);
+
+    if (quantity > product.stock) {
+      return res.status(400).json({ message: "Insufficient stock of product" });
+    }
+
     if (product) {
       const payload = {
         event: "ADD_TO_CART",
-        data: { userId: "TODO", product, quantity },
+        data: {
+          userId: "6f0a6422-1059-4dc4-b56c-eec59a52c189",
+          product,
+          quantity,
+        },
       };
+
       await publishMessage(
         process.env.CUSTOMER_BINDING_KEY,
         JSON.stringify(payload)
       );
-      await publishMessage(
-        process.env.SHOPPING_BINDING_KEY,
-        JSON.stringify(payload)
-      );
+
       return res
         .status(200)
         .json({ product: payload.data.product, unit: payload.data.quantity });
@@ -252,22 +253,19 @@ export async function addToCart(req: Request, res: Response) {
 
 export async function removeFromCart(req: Request, res: Response) {
   try {
-    // TODO userId after auth
     const productId = req.params.id;
     const product = await Product.findByPk(productId);
     if (product) {
       const payload = {
         event: "REMOVE_FROM_CART",
-        data: { userId: "TODO", product },
+        data: { userId: "6f0a6422-1059-4dc4-b56c-eec59a52c189", product },
       };
+
       await publishMessage(
         process.env.CUSTOMER_BINDING_KEY,
         JSON.stringify(payload)
       );
-      await publishMessage(
-        process.env.SHOPPING_BINDING_KEY,
-        JSON.stringify(payload)
-      );
+
       return res.status(200).json({ product: payload.data.product });
     } else {
       return res.status(400).json({ message: "Product not found" });
