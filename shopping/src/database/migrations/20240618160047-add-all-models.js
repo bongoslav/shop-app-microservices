@@ -23,19 +23,11 @@ module.exports = {
             type: DataTypes.STRING,
             allowNull: false,
           },
-          banner: {
-            type: DataTypes.STRING,
-            allowNull: false,
-          },
           price: {
             type: DataTypes.FLOAT,
             allowNull: false,
           },
-          type: {
-            type: DataTypes.STRING,
-            allowNull: false,
-          },
-          unit: {
+          stock: {
             type: DataTypes.INTEGER,
             allowNull: false,
           },

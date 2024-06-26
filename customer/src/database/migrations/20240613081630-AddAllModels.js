@@ -6,7 +6,7 @@ const { DataTypes } = require("sequelize");
 module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction(async (transaction) => {
-      // create Addresses table with its columns
+      // Addresses
       await queryInterface.createTable(
         "Addresses",
         {
@@ -44,7 +44,7 @@ module.exports = {
         { transaction }
       );
 
-      // Create Customers table
+      // Customers
       await queryInterface.createTable(
         "Customers",
         {
@@ -62,9 +62,17 @@ module.exports = {
             type: DataTypes.STRING,
             allowNull: false,
           },
+          firstName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+          },
+          lastName: {
+            type: DataTypes.STRING,
+            allowNull: false,
+          },
           phone: {
             type: DataTypes.STRING,
-            allowNull: false,
+            allowNull: true,
           },
           createdAt: {
             type: Sequelize.DATE,
@@ -78,102 +86,8 @@ module.exports = {
         { transaction }
       );
 
-      // products
-      await queryInterface.createTable(
-        "Products",
-        {
-          id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            allowNull: false,
-            primaryKey: true,
-          },
-          name: {
-            type: DataTypes.STRING,
-            allowNull: false,
-          },
-          price: {
-            type: DataTypes.FLOAT,
-            allowNull: false,
-          },
-          createdAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-          updatedAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-        },
-        { transaction }
-      );
-
-      // Carts
-      await queryInterface.createTable(
-        "Carts",
-        {
-          id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUIDV4,
-            allowNull: false,
-            primaryKey: true,
-          },
-          customerId: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: { model: "Customers", key: "id" },
-            onDelete: "CASCADE",
-          },
-          createdAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-          updatedAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-        },
-        { transaction }
-      );
-
-      // Orders
-      await queryInterface.createTable(
-        "Orders",
-        {
-          id: {
-            type: DataTypes.UUID,
-            defaultValue: DataTypes.UUID,
-            allowNull: false,
-            primaryKey: true,
-          },
-          amount: {
-            type: DataTypes.INTEGER,
-            allowNull: false,
-          },
-          date: {
-            type: DataTypes.DATE,
-            allowNull: false,
-            defaultValue: DataTypes.NOW,
-          },
-          customerId: {
-            type: DataTypes.UUID,
-            allowNull: false,
-            references: { model: "Customers", key: "id" },
-            onDelete: "CASCADE",
-          },
-          createdAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-          updatedAt: {
-            type: Sequelize.DATE,
-            allowNull: false,
-          },
-        },
-        { transaction }
-      );
-
-      // wishlists
+      // Minimal Product Reference method combined with API Composition for fetching complete wishlist data
+      // Wishlists
       await queryInterface.createTable(
         "Wishlists",
         {
@@ -188,6 +102,43 @@ module.exports = {
             allowNull: false,
             references: { model: "Customers", key: "id" },
             onDelete: "CASCADE",
+          },
+          createdAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+          updatedAt: {
+            type: Sequelize.DATE,
+            allowNull: false,
+          },
+        },
+        { transaction }
+      );
+
+      // WishlistProducts
+      await queryInterface.createTable(
+        "WishlistProducts",
+        {
+          id: {
+            type: Sequelize.UUID,
+            defaultValue: Sequelize.UUIDV4,
+            allowNull: false,
+            primaryKey: true,
+          },
+          wishlistId: {
+            type: Sequelize.UUID,
+            allowNull: false,
+            references: { model: "Wishlists", key: "id" },
+            onDelete: "CASCADE",
+          },
+          productId: {
+            type: Sequelize.UUID,
+            allowNull: false,
+          },
+          quantity: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
+            defaultValue: 1,
           },
           createdAt: {
             type: Sequelize.DATE,
@@ -211,27 +162,17 @@ module.exports = {
         { transaction }
       );
       await queryInterface.dropTable(
-        "Products",
-        { cascade: true },
-        { transaction }
-      );
-      await queryInterface.dropTable(
-        "Carts",
-        { cascade: true },
-        { transaction }
-      );
-      await queryInterface.dropTable(
         "Customers",
         { cascade: true },
         { transaction }
       );
       await queryInterface.dropTable(
-        "Orders",
+        "Wishlists",
         { cascade: true },
         { transaction }
       );
       await queryInterface.dropTable(
-        "Wishlists",
+        "WishlistProducts",
         { cascade: true },
         { transaction }
       );

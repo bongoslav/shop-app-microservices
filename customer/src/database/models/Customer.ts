@@ -11,10 +11,8 @@ import {
   Table,
 } from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
-import Cart from "./Cart";
 import Address from "./Address";
 import Wishlist from "./Wishlist";
-import Order from "./Order";
 
 export interface CustomerData {
   id: string;
@@ -40,6 +38,14 @@ export default class Customer extends Model {
 
   @AllowNull(false)
   @Column(DataType.STRING)
+  declare firstName: string;
+
+  @AllowNull(false)
+  @Column(DataType.STRING)
+  declare lastName: string;
+
+  @AllowNull(true)
+  @Column(DataType.STRING)
   declare phone: string;
 
   @BelongsToMany(
@@ -50,12 +56,6 @@ export default class Customer extends Model {
   )
   declare addresses: Address[];
 
-  @HasMany(() => Order, "customerId")
-  declare orders: Order[];
-
   @HasOne(() => Wishlist)
   declare wishlistId: string;
-
-  @HasOne(() => Cart)
-  declare cartId: string;
 }

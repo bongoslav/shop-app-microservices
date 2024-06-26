@@ -29,6 +29,14 @@ export async function createProduct(req: Request, res: Response) {
     // TODO: validation
     const productData = req.body as CreateProductData;
     const product = await Product.create(productData);
+
+    // "beta" stage
+    const payload = { event: "PRODUCT_CREATED", data: { product: product } };
+    await publishMessage(
+      process.env.SHOPPING_BINDING_KEY,
+      JSON.stringify(payload)
+    );
+
     return res.json(product).status(201);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -37,23 +45,28 @@ export async function createProduct(req: Request, res: Response) {
 
 export async function updateProduct(req: Request, res: Response) {
   try {
-    // TODO: validation
     const updatableProperties = [
       "name",
       "description",
       "price",
       "stock",
-      "photos",
       "supplier",
     ];
     const product = await Product.findByPk(req.params.id);
 
+    const updatedProperties = {};
     for (const property of updatableProperties) {
-      await product.update(property, req.body.property);
+      await product.update({ propertya: req.body[property] });
+      updatedProperties[property] = req.body[property];
     }
+    await product.update(updatedProperties);
 
-    await product.save();
-    await product.reload();
+    const payload = { event: "PRODUCT_UPDATED", data: { product: product } };
+    await publishMessage(
+      process.env.SHOPPING_BINDING_KEY,
+      JSON.stringify(payload)
+    );
+
     return res.json(product).status(200);
   } catch (error) {
     return res.status(500).json({ error: error.message });
@@ -64,7 +77,23 @@ export async function deleteProduct(req: Request, res: Response) {
   try {
     const product = await Product.findByPk(req.params.id);
     await product.destroy();
-    return res.status(204);
+
+    const payload = {
+      event: "PRODUCT_DELETED",
+      data: {
+        product: product,
+        userId: "6f0a6422-1059-4dc4-b56c-eec59a52c189",
+      },
+    };
+    await publishMessage(
+      process.env.CUSTOMER_BINDING_KEY,
+      JSON.stringify(payload)
+    );
+    await publishMessage(
+      process.env.SHOPPING_BINDING_KEY,
+      JSON.stringify(payload)
+    );
+    return res.status(200).json({ message: "Product deleted" });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -156,6 +185,7 @@ export async function getProductsByCategory(req: Request, res: Response) {
   }
 }
 
+// ! remove all below
 export async function addToWishlist(req: Request, res: Response) {
   try {
     const quantity = req.body.quantity;
@@ -167,9 +197,9 @@ export async function addToWishlist(req: Request, res: Response) {
 
     if (product) {
       const payload = {
-        event: "ADD_TO_WISHLIST",
+        event: "WISHLIST_ADD",
         data: {
-          userId: "6f0a6422-1059-4dc4-b56c-eec59a52c189", // TODO: change after auth update
+          userId: "b78716ad-4a59-4768-bf32-dc222e770239", // TODO: change after auth update
           product,
           quantity,
         },
@@ -199,9 +229,15 @@ export async function removeFromWishlist(req: Request, res: Response) {
 
     if (product) {
       const payload = {
-        event: "REMOVE_FROM_WISHLIST",
-        data: { userId: "6f0a6422-1059-4dc4-b56c-eec59a52c189", product },
+        event: "WISHLIST_REMOVE",
+        data: { userId: "b78716ad-4a59-4768-bf32-dc222e770239", product },
       };
+      // currently, it's not handled if publishing is unsuccessful
+      // if i want to do it:
+      // i should publish the response in the handling of customer service
+      // then i should wait for the response to consume it
+      // then based on the output return correct code
+      // this is valid for all messaging communications between services
       await publishMessage(
         process.env.CUSTOMER_BINDING_KEY,
         JSON.stringify(payload)

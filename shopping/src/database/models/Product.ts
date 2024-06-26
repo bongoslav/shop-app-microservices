@@ -28,20 +28,12 @@ export default class Product extends Model {
   declare description: string;
 
   @AllowNull(false)
-  @Column(DataType.STRING)
-  declare banner: string;
-
-  @AllowNull(false)
-  @Column(DataType.STRING)
-  declare type: string;
-
-  @AllowNull(false)
-  @Column(DataType.NUMBER)
-  declare unit: number;
-
-  @AllowNull(false)
   @Column(DataType.NUMBER)
   declare price: number;
+
+  @AllowNull(false)
+  @Column(DataType.NUMBER)
+  declare stock: number;
 
   @AllowNull(false)
   @Column(DataType.STRING)

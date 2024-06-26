@@ -3,17 +3,31 @@ import Order from "../../database/models/Order";
 import Cart from "../../database/models/Cart";
 import Cart_Products from "../../database/models/Cart_Products";
 import Product from "../../database/models/Product";
-import { publishMessage } from "../../utils/broker";
+import db from "../../database/db";
 
 export async function getAllOrders(req: Request, res: Response) {
   try {
-    let orders: Order[];
-    if (req.query.uid) {
-      orders = await Order.findAll({ where: { id: req.query.uid } });
-    } else {
-      orders = await Order.findAll();
-    }
+    const orders = await Order.findAll();
+
     return res.json(orders).status(200);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+export async function getSingleOrder(req: Request, res: Response) {
+  try {
+    const order = await Order.findOne({ where: { id: req.query.id } });
+    return res.json(order).status(200);
+  } catch (error) {
+    return res.status(500).json({ error: error.message });
+  }
+}
+
+export async function getUserOrder(req: Request, res: Response) {
+  try {
+    const order = await Order.findOne({ where: { customerId: req.query.id } });
+    return res.json(order).status(200);
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
@@ -55,14 +69,11 @@ export async function createOrder(req: Request, res: Response) {
     // clear the user's cart
     await Cart_Products.destroy({ where: { cartId: cart.id } });
 
+    // beta
     const payload = {
       event: "CREATE_ORDER",
       data: { userId: "TODO", order },
     };
-    await publishMessage(
-      process.env.CUSTOMER_BINDING_KEY,
-      JSON.stringify(payload)
-    );
 
     return res.status(201).json(order);
   } catch (error) {
@@ -93,11 +104,13 @@ export async function getCart(req: Request, res: Response) {
 export async function addToCart(req: Request, res: Response) {
   const customerId = "5c090437-5f28-4615-9a6c-fcc76dceb2c2";
   const { productId, quantity } = req.body;
+  const transaction = await db.transaction();
   try {
-    const cart = await Cart.findOne({ where: { customerId } });
-    if (!cart) {
-      throw new Error("Cart not found");
-    }
+    const [cart] = await Cart.findOrCreate({
+      where: { customerId },
+      defaults: { customerId },
+      transaction,
+    });
 
     let cartProduct = await Cart_Products.findOne({
       where: {
@@ -105,31 +118,34 @@ export async function addToCart(req: Request, res: Response) {
         productId,
       },
       include: [Product],
+      transaction,
     });
 
     if (cartProduct) {
       // update the quantity if the product is already in the cart
       cartProduct.quantity += quantity;
-      await cartProduct.save();
+      await cartProduct.save({ transaction });
     } else {
-      cartProduct = await Cart_Products.create({
-        cartId: cart.id,
-        productId,
-        quantity,
-      });
+      cartProduct = await Cart_Products.create(
+        {
+          cartId: cart.id,
+          productId,
+          quantity,
+        },
+        { transaction }
+      );
     }
 
+    // beta
     const payload = {
       event: "ADD_TO_CART",
       data: { userId: customerId, product: cartProduct.product },
     };
-    await publishMessage(
-      process.env.CUSTOMER_BINDING_KEY,
-      JSON.stringify(payload)
-    );
 
+    transaction.commit();
     return res.status(200).json(cartProduct);
   } catch (error) {
+    transaction.rollback();
     return res.status(500).json({ error: error.message });
   }
 }
@@ -160,6 +176,13 @@ export async function removeFromCart(req: Request, res: Response) {
     } else {
       await cartProduct.destroy();
     }
+
+    // beta
+    const payload = {
+      event: "REMOVE_FROM_CART",
+      data: { userId: customerId, product: cartProduct.product },
+    };
+
     return res.status(200).json(cart);
   } catch (error) {
     return res.status(500).json({ error: error.message });

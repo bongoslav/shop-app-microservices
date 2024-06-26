@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
   addPhotoToProduct,
-  addToCart,
   addToWishlist,
   createCategory,
   createProduct,
@@ -10,7 +9,6 @@ import {
   getAllProducts,
   getProductsByCategory,
   getSingleProduct,
-  removeFromCart,
   removeFromWishlist,
   removePhotoFromProduct,
   updateProduct,
@@ -27,8 +25,8 @@ router.get("/categories/:categoryId", getProductsByCategory);
 router.put("/wishlist", addToWishlist);
 router.delete("/wishlist/:id", removeFromWishlist);
 
-router.put("/cart", addToCart);
-router.delete("/cart/:id", removeFromCart);
+// router.put("/cart", addToCart);
+// router.delete("/cart/:id", removeFromCart);
 
 router.get("/", getAllProducts);
 router.get("/:id", getSingleProduct);

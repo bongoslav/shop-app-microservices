@@ -6,12 +6,12 @@ import {
   ForeignKey,
   PrimaryKey,
   Default,
-  BelongsToMany,
   BelongsTo,
+  HasMany,
 } from "sequelize-typescript";
 import { v4 as uuidv4 } from "uuid";
 import Customer from "./Customer";
-import Product from "./Product";
+import WishlistProduct from "./WishlistProduct";
 
 @Table
 export default class Wishlist extends Model {
@@ -27,6 +27,6 @@ export default class Wishlist extends Model {
   @BelongsTo(() => Customer)
   declare customer: Customer;
 
-  @BelongsToMany(() => Product, "Wishlist_Products", "wishlistId", "productId")
-  declare products: Product[];
+  @HasMany(() => WishlistProduct)
+  declare products: WishlistProduct[];
 }

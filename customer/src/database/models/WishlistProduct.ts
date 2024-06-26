@@ -2,26 +2,36 @@ import {
   Table,
   Column,
   Model,
-  ForeignKey,
   DataType,
-  AllowNull,
+  ForeignKey,
+  PrimaryKey,
   Default,
+  BelongsTo,
+  AllowNull,
 } from "sequelize-typescript";
+import { v4 as uuidv4 } from "uuid";
 import Wishlist from "./Wishlist";
-import Product from "./Product";
 
+// Minimal Product Reference method
 @Table
-export default class Wishlist_Products extends Model {
+export default class WishlistProduct extends Model {
+  @PrimaryKey
+  @Default(uuidv4)
+  @Column(DataType.UUID)
+  declare id: string;
+
   @ForeignKey(() => Wishlist)
   @Column(DataType.UUID)
   declare wishlistId: string;
 
-  @ForeignKey(() => Product)
   @Column(DataType.UUID)
   declare productId: string;
 
-  @Default(1)
   @AllowNull(false)
+  @Default(1)
   @Column(DataType.INTEGER)
   declare quantity: number;
+
+  @BelongsTo(() => Wishlist)
+  declare wishlist: Wishlist;
 }

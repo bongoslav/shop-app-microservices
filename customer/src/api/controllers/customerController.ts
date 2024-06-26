@@ -2,12 +2,11 @@ import { Request, Response } from "express";
 import Customer from "../../database/models/Customer";
 import argon2 from "argon2";
 import { CreateCustomerData } from "../../utils/types";
-import Cart from "../../database/models/Cart";
 import Wishlist from "../../database/models/Wishlist";
 import db from "../../database/db";
-import Product from "../../database/models/Product";
+import WishlistProduct from "../../database/models/WishlistProduct";
 
-const updatableFields = ["email", "password", "phone"];
+const updatableFields = ["email", "password", "phone", "firstName", "lastName"];
 
 export async function getAllCustomers(req: Request, res: Response) {
   try {
@@ -22,8 +21,10 @@ export async function getCustomerById(req: Request, res: Response) {
   try {
     const customer = await Customer.findByPk(req.params.id, {
       include: [
-        { model: Wishlist, include: [Product] },
-        { model: Cart, include: [Product] },
+        {
+          model: Wishlist,
+          include: [WishlistProduct],
+        },
       ],
     });
     if (customer) {
@@ -42,7 +43,9 @@ export async function createCustomer(
   res: Response
 ) {
   try {
-    const isExistingEmail = await emailExists(req.body.email);
+    const isExistingEmail = await Customer.findOne({
+      where: { email: req.body.email },
+    });
 
     if (isExistingEmail) {
       return res.status(400).json({ error: "Email already exists" });
@@ -58,14 +61,12 @@ export async function createCustomer(
           email: req.body.email,
           phone: req.body.phone,
           hashedPassword,
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
         },
         { transaction }
       );
 
-      await Cart.create(
-        { customerId: newCustomer.id, unit: 0 },
-        { transaction }
-      );
       await Wishlist.create({ customerId: newCustomer.id }, { transaction });
       transaction.commit();
 
@@ -77,10 +78,6 @@ export async function createCustomer(
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
-}
-
-async function emailExists(email: string) {
-  return await Customer.findOne({ where: { email } });
 }
 
 export async function updateCustomer(req: Request, res: Response) {

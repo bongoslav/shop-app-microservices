@@ -1,18 +1,24 @@
+import ShoppingService from "../services/shoppingService";
+
 export async function SubscribeEvents(payload) {
-  console.log("Triggering Shopping Events");
-
-  payload = JSON.parse(payload);
   const { event, data } = payload;
-  const { userId, product, qty } = data;
+  const { userId, product } = data;
 
+  const service = new ShoppingService();
+
+  // TODO: do i need the whole product in this service ??
   switch (event) {
-    case "ADD_TO_CART":
-      console.log("ADD TO CART EVENT FROM SHOPPING SERVICE");
+    case "PRODUCT_CREATED":
+      await service.handleProductCreate(product);
       break;
-    case "REMOVE_FROM_CART":
-      console.log("REMOVE FROM CART EVENT FROM SHOPPING SERVICE");
+    case "PRODUCT_UPDATED":
+      await service.handleProductUpdate(product);
+      break;
+    case "PRODUCT_DELETED":
+      await service.handleProductDeleted(product.id);
       break;
     default:
+
       break;
   }
 }
