@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import Product from "../../database/models/Product";
-import { CreateProductData } from "../../utils/types";
+import { CreateProductData, MulterRequest } from "../../utils/types";
 import { publishMessage } from "../../utils/broker";
 import Category from "../../database/models/Category";
 import fs from "fs";
@@ -99,7 +99,7 @@ export async function deleteProduct(req: Request, res: Response) {
   }
 }
 
-export async function addPhotoToProduct(req: Request, res: Response) {
+export async function addPhotoToProduct(req: MulterRequest, res: Response) {
   if (!req.file) {
     return res.status(400).json({ error: "No photo uploaded." });
   }

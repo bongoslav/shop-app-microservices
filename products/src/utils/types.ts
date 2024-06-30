@@ -1,3 +1,5 @@
+import { Request } from "express";
+
 export type CreateProductData = {
   name: string;
   description: string;
@@ -8,3 +10,7 @@ export type CreateProductData = {
   available: boolean;
   supplier: string;
 };
+
+export interface MulterRequest extends Request {
+  file: any;
+}
